@@ -1,0 +1,6 @@
+venv/
+.idea/
+*.pyc
+db.sqlite3
+HomeBudget/.env
+postgres_settings.py
