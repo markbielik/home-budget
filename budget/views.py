@@ -1,10 +1,12 @@
+from django.db.models import Sum
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .constants import TransactionTypeE
 from .models import Accounts, Transactions
-from .serializers import AccountSerializer, TransactionSerializer
+from .serializers import AccountSerializer, TransactionSerializer, StatsSerializer
 
 
 class AccountViewSet(viewsets.ModelViewSet):
@@ -20,4 +22,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
 class StatsView(APIView):
 
     def get(self, request, *args, **kwargs):
-        return Response(data={'info': 'stats view'})
+        account_stats = StatsSerializer(instance=Accounts.objects.all(),
+                                        many=True)
+        return Response(data={"results": account_stats.data})
