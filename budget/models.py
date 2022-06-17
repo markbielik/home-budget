@@ -30,3 +30,4 @@ class Transactions(models.Model):
                                                      transaction_type.name) for transaction_type in TransactionTypeE])
     account = models.ForeignKey(Accounts,
                                 on_delete=models.CASCADE)
+    created_data = models.DateField()

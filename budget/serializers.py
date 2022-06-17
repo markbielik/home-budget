@@ -27,7 +27,8 @@ class TransactionSerializer(serializers.ModelSerializer):
             'description',
             'transaction_type',
             'transaction_type_display',
-            'account'
+            'account',
+            'created_data',
         )
 
     def get_transaction_type_display(self, obj):
