@@ -35,15 +35,24 @@ class TransactionSerializer(serializers.ModelSerializer):
         return TransactionTypeE(obj.transaction_type).name
 
 
-class StatsSerializer(serializers.ModelSerializer):
+class StatsFilterSerializer(serializers.Serializer):
+    from_date = serializers.DateField(required=False)
+    to_date = serializers.DateField(required=False)
 
-    class Meta:
-        model = Accounts
-        fields = (
-            'id',
-            'name',
-            'amount_in',
-            'amount_out',
-            'balance',
-        )
+
+class StatsResultSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    amount_in = serializers.DecimalField(max_digits=15,
+                                         decimal_places=2)
+    amount_out = serializers.DecimalField(max_digits=15,
+                                          decimal_places=2)
+    balance = serializers.DecimalField(max_digits=15,
+                                       decimal_places=2)
+
+
+class StatsSerializer(serializers.Serializer):
+    results = serializers.ListSerializer(child=StatsResultSerializer())
+    date = StatsFilterSerializer()
+
 

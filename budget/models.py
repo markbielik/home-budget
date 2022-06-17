@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.db.models import Sum
 
@@ -17,20 +19,26 @@ class Accounts(models.Model):
     def __str__(self):
         return self.name
 
-    def amount_in(self):
-        amount_in = Transactions.objects.filter(account=self,
-                                                transaction_type=TransactionTypeE.IN.value
-                                                ).aggregate(sum=Sum("amount"))
-        return amount_in["sum"]
+    def amount_in(self, transactions_qs=None):
+        if transactions_qs is None:
+            transactions_qs = Transactions.objects.all()
+        amount_in = transactions_qs.filter(account=self,
+                                           transaction_type=TransactionTypeE.IN.value
+                                           ).aggregate(sum=Sum("amount"))
+        return amount_in["sum"] or Decimal(0)
 
-    def amount_out(self):
-        amount_out = Transactions.objects.filter(account=self,
-                                                 transaction_type=TransactionTypeE.OUT.value
-                                                 ).aggregate(sum=Sum("amount"))
-        return amount_out["sum"]
+    def amount_out(self, transactions_qs=None):
+        if transactions_qs is None:
+            transactions_qs = Transactions.objects.all()
+        amount_out = transactions_qs.filter(account=self,
+                                            transaction_type=TransactionTypeE.OUT.value
+                                            ).aggregate(sum=Sum("amount"))
+        return amount_out["sum"] or Decimal(0)
 
-    def balance(self):
-        return self.amount_in() - self.amount_out() + self.initial_balance
+    def balance(self, transactions_qs=None):
+        return self.amount_in(transactions_qs=transactions_qs) - \
+               self.amount_out(transactions_qs=transactions_qs) + \
+               self.initial_balance
 
 
 class Transactions(models.Model):
