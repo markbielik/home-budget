@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 
 from budget.constants import TransactionTypeE
 
@@ -16,6 +17,21 @@ class Accounts(models.Model):
     def __str__(self):
         return self.name
 
+    def amount_in(self):
+        amount_in = Transactions.objects.filter(account=self,
+                                                transaction_type=TransactionTypeE.IN.value
+                                                ).aggregate(sum=Sum("amount"))
+        return amount_in["sum"]
+
+    def amount_out(self):
+        amount_out = Transactions.objects.filter(account=self,
+                                                 transaction_type=TransactionTypeE.OUT.value
+                                                 ).aggregate(sum=Sum("amount"))
+        return amount_out["sum"]
+
+    def balance(self):
+        return self.amount_in() - self.amount_out() + self.initial_balance
+
 
 class Transactions(models.Model):
     amount = models.DecimalField(verbose_name="Amount",
@@ -30,3 +46,4 @@ class Transactions(models.Model):
                                                      transaction_type.name) for transaction_type in TransactionTypeE])
     account = models.ForeignKey(Accounts,
                                 on_delete=models.CASCADE)
+    created_data = models.DateField()
