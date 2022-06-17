@@ -13,6 +13,9 @@ class Accounts(models.Model):
                                           max_digits=15,
                                           decimal_places=2)
 
+    def __str__(self):
+        return self.name
+
 
 class Transactions(models.Model):
     amount = models.DecimalField(verbose_name="Amount",
