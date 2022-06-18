@@ -11,13 +11,23 @@ from .serializers import AccountSerializer, TransactionSerializer, StatsSerializ
 
 
 class AccountViewSet(viewsets.ModelViewSet):
-    queryset = Accounts.objects.all()
     serializer_class = AccountSerializer
+
+    def get_queryset(self):
+        return Accounts.objects.filter(user=self.request.user).all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
-    queryset = Transactions.objects.all()
     serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        return Transactions.objects.filter(user=self.request.user).all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class StatsView(APIView):
