@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.conf import settings
 from django.db import models
 from django.db.models import Sum
 
@@ -7,6 +8,9 @@ from budget.constants import TransactionTypeE
 
 
 class Accounts(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             null=True,
+                             on_delete=models.CASCADE)
     name = models.CharField(verbose_name="Account name",
                             max_length=256)
     description = models.CharField(max_length=2048,
@@ -42,6 +46,9 @@ class Accounts(models.Model):
 
 
 class Transactions(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             null=True,
+                             on_delete=models.CASCADE)
     amount = models.DecimalField(verbose_name="Amount",
                                  max_digits=15,
                                  decimal_places=2)
