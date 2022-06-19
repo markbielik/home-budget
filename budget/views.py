@@ -1,10 +1,8 @@
-from django.db.models import Sum
-from django.shortcuts import render
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .constants import TransactionTypeE
 from .handlers import AccountsAggregator
 from .models import Accounts, Transactions
 from .permissions import IsTestUser
@@ -37,6 +35,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
 class StatsView(APIView):
 
+    @swagger_auto_schema(responses={200: StatsSerializer()},
+                         query_serializer=StatsFilterSerializer())
     def get(self, request, *args, **kwargs):
         filter_account_stats = StatsFilterSerializer(data=request.query_params)
         filter_account_stats.is_valid(raise_exception=True)
