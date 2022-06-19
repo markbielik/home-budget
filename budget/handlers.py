@@ -3,10 +3,11 @@ from budget.models import Transactions, Accounts
 
 class AccountsAggregator:
 
-    def __init__(self, from_date, to_date):
+    def __init__(self, from_date, to_date, user):
         self.from_date = from_date
         self.to_date = to_date
-        filters = {}
+        self.user = user
+        filters = {'user': self.user}
         if self.from_date:
             filters["created_data__gte"] = self.from_date
         if self.to_date:
@@ -15,7 +16,7 @@ class AccountsAggregator:
 
     def aggregate(self):
         data = []
-        for account in Accounts.objects.all():
+        for account in Accounts.objects.filter(user=self.user).all():
             data.append(
                 {
                     'id': account.id,
